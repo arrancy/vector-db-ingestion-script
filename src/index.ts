@@ -66,4 +66,29 @@ async function normalise() {
   // await fs.writeFile(newFilePath, dataString);
 }
 
-normalise();
+async function vectorSearch() {
+  const cityName = "Goa";
+  const response = await ai.models.embedContent({
+    contents: cityName,
+    model: "gemini-embedding-001",
+  });
+  if (!response || !response.embeddings)
+    return console.log("did not get response");
+  console.log("embedding generated!");
+  const embeddingArray = response.embeddings[0].values;
+  if (!embeddingArray) return console.log("did not find embedding array");
+  const { data, error } = await supabase.rpc("match_travel_embeddings", {
+    query_embedding: embeddingArray,
+    match_count: 3,
+  });
+
+  if (error) return console.log("search error : " + error);
+  console.log("received contents : ");
+  data.forEach((row: { content: string }, index: number) => {
+    console.log(index + 1 + " : ");
+    console.log("content : " + row.content);
+    console.log("-------");
+  });
+}
+
+vectorSearch();
