@@ -92,3 +92,24 @@ async function vectorSearch() {
 }
 
 vectorSearch();
+
+// rpc sql function
+// create or replace function match_travel_embeddings(
+//   query_embedding vector(3072),
+//   match_count int
+// )
+// returns table (
+//   id uuid,
+//   content text,
+//   metadata json
+// )
+// language sql
+// as $$
+//   select
+//     id,
+//     content,
+//     metadata
+//   from travel_embeddings
+//   order by embedding <=> query_embedding
+//   limit match_count;
+// $$;
